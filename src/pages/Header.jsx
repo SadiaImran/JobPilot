@@ -55,8 +55,11 @@ const handleSignup = async (e) => {
     options: {
       data: {
         full_name: name,
-      }
+      } , 
+      emailRedirectTo: "https://job-pilot-phi.vercel.app/auth/callback"
+
     }
+    
   });
 
   if (error) {

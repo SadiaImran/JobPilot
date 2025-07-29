@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import UploadPage from './pages/UploadPage';
 import BaseLayout from './layouts/BaseLayout';
 import JobApplicationAssistant from './pages/JobApplicationAssistant';
+import AuthCallback from './pages/AuthCallBack';
 
 function PrivateRoute({ isLoggedIn, children }) {
   return isLoggedIn ? children : <Navigate to="/" replace />;
@@ -15,7 +16,8 @@ const AppRoutes = ({ isLoggedIn, setIsLoggedIn }) => (
     <Route element={<BaseLayout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
-     
+
+      <Route path="/auth/callback" element={<AuthCallback />} />
       {/* Protected Routes */}
       <Route
         path="/dashboard"
