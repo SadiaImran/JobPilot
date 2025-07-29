@@ -50,7 +50,7 @@ const HomePage = ({ setCurrentPage, setIsLoggedIn  }) => {
                  onClick={() => {
                   setIsLoggedIn(true);
                 }}
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center"
+                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center cursor-pointer"
               >
                 Start Tracking Now
                 <ChevronRight className="ml-2 h-5 w-5" />
