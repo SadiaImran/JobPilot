@@ -47,10 +47,6 @@ const Dashboard = ({ setCurrentPage }) => {
       // Newest first
       return new Date(b.applied_date) - new Date(a.applied_date);
     }
-    if (sortBy === 'score') {
-      // Highest score first
-      return (b.match_score || 0) - (a.match_score || 0);
-    }
     if (sortBy === 'company') {
       // Alphabetical by company name
       return (a.company_name || '').localeCompare(b.company_name || '');
@@ -177,17 +173,7 @@ console.log("Fetched jobs from Supabase: ", data); // 👈 Add this
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <div className="flex items-center">
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <div className="text-2xl font-bold text-gray-900">{jobs.length > 0 ? Math.round(jobs.reduce((sum, job) => sum + (job.match_score || 0), 0) / jobs.length) : 0}</div>
-                <div className="text-sm text-gray-600">Avg. Match Score</div>
-              </div>
-            </div>
-          </div>
+         
         </div>
 
         {/* Controls */}
@@ -211,7 +197,7 @@ console.log("Fetched jobs from Supabase: ", data); // 👈 Add this
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="date">Sort by Date</option>
-                <option value="score">Sort by Score</option>
+                
                 <option value="company">Sort by Company</option>
               </select>
             </div>
@@ -238,7 +224,6 @@ console.log("Fetched jobs from Supabase: ", data); // 👈 Add this
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Applied</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Match Score</th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
                 </tr>
               </thead>
@@ -263,18 +248,7 @@ console.log("Fetched jobs from Supabase: ", data); // 👈 Add this
                         <span className="ml-1 capitalize">{job.status}</span>
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="text-sm font-medium text-gray-900">{job.match_score}%</div>
-                        <div className="ml-2 w-16 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${job.match_score}%` }}
-                          >
-                          </div>
-                        </div>
-                      </div>
-                    </td>
+                    
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {job.notes}
                     </td>
