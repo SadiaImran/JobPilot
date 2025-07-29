@@ -39,34 +39,45 @@ const Header = ({ isLoggedIn, setIsLoggedIn   }) => {
     }
   };
 
-  // Signup handler
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    if (!email.includes('@') || password.length < 6 || name.trim() === '') {
-      alert('Please fill all fields correctly.');
-      setLoading(false);
-      return;
-    }
-    const { error } = await supabase.auth.signUp({
-      email : email,
-      password : password,
-      options: {
-        data: {
-          full_name: name,
-        }
-      }
-});
+const handleSignup = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
+  if (!email.includes('@') || password.length < 6 || name.trim() === '') {
+    alert('Please fill all fields correctly.');
     setLoading(false);
-    if (error) {
-      alert(error.message);
-    } else {
-      alert('✅ Sign up successful!\n\nPlease check your email to verify your account before logging in.');
+    return;
+  }
+
+  const { error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        full_name: name,
+      }
+    }
+  });
+
+  if (error) {
+    if (error.message.includes("User already registered")) {
+      alert("⚠️ This email is already registered. Please login instead.");
       setShowSignup(false);
       setShowLogin(true);
+    } else {
+      alert("Signup failed: " + error.message);
     }
-  };
+    setLoading(false);
+    return; // ⛔ stop here if there's error
+  }
+
+  // ✅ Success flow
+  alert('✅ Sign up successful!\n\nPlease check your email to verify your account before logging in.');
+  setShowSignup(false);
+  setShowLogin(true);
+  setLoading(false);
+};
+
 
   return (
     <header className="bg-white shadow-md border-b border-2 border-gray-300 sticky  top-0 z-40">
