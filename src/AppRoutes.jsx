@@ -1,0 +1,50 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import Dashboard from './pages/Dashboard';
+import UploadPage from './pages/UploadPage';
+import BaseLayout from './layouts/BaseLayout';
+import JobApplicationAssistant from './pages/JobApplicationAssistant';
+
+function PrivateRoute({ isLoggedIn, children }) {
+  return isLoggedIn ? children : <Navigate to="/" replace />;
+}
+
+const AppRoutes = ({ isLoggedIn, setIsLoggedIn }) => (
+  <Routes>
+    <Route element={<BaseLayout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}>
+      {/* Public Routes */}
+      <Route path="/" element={<HomePage />} />
+     
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute isLoggedIn={isLoggedIn}>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/upload"
+        element={
+          <PrivateRoute isLoggedIn={isLoggedIn}>
+            <UploadPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/application-assitant"
+        element={
+          <PrivateRoute isLoggedIn={isLoggedIn}>
+            <JobApplicationAssistant />
+          </PrivateRoute>
+        }
+      />
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Route>
+  </Routes>
+);
+
+export default AppRoutes;
