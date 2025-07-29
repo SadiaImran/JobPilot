@@ -47,7 +47,9 @@ const HomePage = ({ setCurrentPage, setIsLoggedIn  }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <button 
-                
+                 onClick={() => {
+                  setIsLoggedIn(true);
+                }}
                 className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center"
               >
                 Start Tracking Now
