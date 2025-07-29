@@ -119,6 +119,6 @@ GEMINI_API_KEY=
 
 - ⭐ Star this repository  
 - 🍴 Fork it and build your own features  
-- 🤝 Connect with me on [LinkedIn](https://linkedin.com)
+- 🤝 Connect with me on [LinkedIn](https://www.linkedin.com/in/sadia-imran-3b627227b)
 
 ---
