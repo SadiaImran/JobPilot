@@ -56,7 +56,7 @@ const handleSignup = async (e) => {
       data: {
         full_name: name,
       } , 
-      emailRedirectTo: "https://job-pilot-phi.vercel.app/auth/callback"
+      emailRedirectTo: "https://job-pilot-phi.vercel.app/verified"
 
     }
     
