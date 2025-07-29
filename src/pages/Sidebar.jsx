@@ -4,13 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase'; 
 import { FaRegUserCircle } from "react-icons/fa";
 
-var { data: { user } } = await supabase.auth.getUser();
-console.log(user.email);
-console.log(user.user_metadata.full_name); 
-user = {
-  email : user.email,
-  name : user.user_metadata.full_name,
-}
 
 const navItems = [
   { name: 'Dashboard', path: '/dashboard', icon: TrendingUp },
@@ -39,16 +32,7 @@ const Sidebar = () => {
           </button>
         ))}
       </nav>
-      {/* User Info at the bottom */}
-      <div className="mt-auto flex items-center gap-3 p-3 rounded-lg bg-blue-50">
-        <FaRegUserCircle 
-          className="w-10 h-10 rounded-full text-blue-500"
-        />
-        <div>
-          <div className="font-semibold text-blue-700 text-sm">{user.name}</div>
-          <div className="text-xs text-blue-400">{user.email}</div>
-        </div>
-      </div>
+      
     </aside>
   );
 };
