@@ -316,7 +316,7 @@ const JobApplicationAssistant = () => {
   const [existingResumes, setExistingResumes] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const apiBase = import.meta.env.VITE_BACKEND_URL;
+  const API = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -392,7 +392,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch(`${apiBase}/analyze`, {
+      const res = await fetch(`${API}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText }),
@@ -422,7 +422,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch(`${apiBase}/cover-letter`, {
+      const res = await fetch(`${API}/cover-letter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText, analysis }),
