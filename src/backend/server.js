@@ -18,35 +18,29 @@ const app = express();
 
 const allowedOrigins = [
   'https://job-pilot-phi.vercel.app',
+  // Add other allowed origins here if needed, e.g., for local development:
+  // 'http://localhost:3000',
+  // 'http://127.0.0.1:3000',
 ];
 
+// --- CORRECT CORS CONFIGURATION ---
+// This middleware handles both preflight (OPTIONS) and actual requests
+// for the specified origins.
 app.use(cors({
   origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    // and also requests from your allowed origins list
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed for this origin'));
+      callback(new Error('CORS not allowed for this origin: ' + origin));
     }
   },
-  credentials: true,
+  credentials: true, // This is important if your frontend needs to send cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Explicitly allowed headers
 }));
-
-// CORS fix - handles both preflight and normal requests
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://job-pilot-phi.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
-// Handle preflight requests
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://job-pilot-phi.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.sendStatus(200);
-});
-
+// --- END CORS CONFIGURATION ---
 
 app.use(json({ limit: '5mb' }));
 
@@ -54,7 +48,7 @@ app.post('/analyze', async (req, res) => {
   const { jobDescription, resumeText } = req.body;
 
   const prompt = `
-You are a job application assistant. Analyze the following resume against the job description. 
+You are a job application assistant. Analyze the following resume against the job description.
 ONLY return a JSON. Do not explain anything. Do not add any commentary. Format strictly like:
 {
   "score": 87,
@@ -176,5 +170,5 @@ ${JSON.stringify(analysis)}
   }
 });
 
-const PORT =  4000;
+const PORT = 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
