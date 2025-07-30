@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Dashboard from './pages/Dashboard';
-import UploadPage from './pages/UploadPage';
 import BaseLayout from './layouts/BaseLayout';
 import JobApplicationAssistant from './pages/JobApplicationAssistant';
 import EmailVerified from './pages/EmailVerified';
