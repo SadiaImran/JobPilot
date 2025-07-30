@@ -391,7 +391,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:4000/analyze', {
+      const res = await fetch('https://job-pilot-phi.vercel.app/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText }),
@@ -421,7 +421,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:4000/cover-letter', {
+      const res = await fetch('https://job-pilot-phi.vercel.app/cover-letter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText, analysis }),

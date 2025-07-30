@@ -17,6 +17,7 @@ const AppRoutes = ({ isLoggedIn, setIsLoggedIn }) => (
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/verified" element={<EmailVerified />} />
+       <Route path="*" element={<Navigate to="/" />} />
 
       {/* Protected Routes */}
       <Route
@@ -28,14 +29,6 @@ const AppRoutes = ({ isLoggedIn, setIsLoggedIn }) => (
         }
       />
       <Route
-        path="/upload"
-        element={
-          <PrivateRoute isLoggedIn={isLoggedIn}>
-            <UploadPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
         path="/application-assitant"
         element={
           <PrivateRoute isLoggedIn={isLoggedIn}>
@@ -43,8 +36,7 @@ const AppRoutes = ({ isLoggedIn, setIsLoggedIn }) => (
           </PrivateRoute>
         }
       />
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" />} />
+     
     </Route>
   </Routes>
 );
