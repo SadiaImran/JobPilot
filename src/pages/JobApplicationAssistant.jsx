@@ -316,6 +316,7 @@ const JobApplicationAssistant = () => {
   const [existingResumes, setExistingResumes] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  const apiBase = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -391,7 +392,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch('https://job-pilot-phi.vercel.app/analyze', {
+      const res = await fetch(`${apiBase}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText }),
@@ -421,7 +422,7 @@ const JobApplicationAssistant = () => {
     }
 
     try {
-      const res = await fetch('https://job-pilot-phi.vercel.app/cover-letter', {
+      const res = await fetch(`${apiBase}/cover-letter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobDescription, resumeText, analysis }),

@@ -15,7 +15,9 @@ const { json } = pkg;
 import axios from 'axios';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*',
+}));
 app.use(json({ limit: '5mb' }));
 
 app.post('/analyze', async (req, res) => {
@@ -144,4 +146,5 @@ ${JSON.stringify(analysis)}
   }
 });
 
-app.listen(4000, () => console.log('Server running on http://localhost:4000'));
+const PORT =  4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
