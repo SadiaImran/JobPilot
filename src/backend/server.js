@@ -15,9 +15,14 @@ const { json } = pkg;
 import axios from 'axios';
 
 const app = express();
-app.use(cors({
-  origin: '*',
-}));
+app.use(
+  cors({
+    origin: 'https://job-pilot-nzgp6wque-sadiaimran837gmailcoms-projects.vercel.app',
+    methods: ['GET', 'POST'],
+    credentials: true
+  })
+);
+
 app.use(json({ limit: '5mb' }));
 
 app.post('/analyze', async (req, res) => {
