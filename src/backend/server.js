@@ -15,10 +15,18 @@ const { json } = pkg;
 import axios from 'axios';
 
 const app = express();
-
-const allowedOrigins = [
-  'https://job-pilot-phi.vercel.app',
-];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for this origin: ' + origin));
+    }
+  },
+  credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+}));
 
 app.use(cors({
   origin: function (origin, callback) {
