@@ -18,29 +18,20 @@ const app = express();
 
 const allowedOrigins = [
   'https://job-pilot-phi.vercel.app',
-  // Add other allowed origins here if needed, e.g., for local development:
-  // 'http://localhost:3000',
-  // 'http://127.0.0.1:3000',
 ];
 
-// --- CORRECT CORS CONFIGURATION ---
-// This middleware handles both preflight (OPTIONS) and actual requests
-// for the specified origins.
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    // and also requests from your allowed origins list
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('CORS not allowed for this origin: ' + origin));
     }
   },
-  credentials: true, // This is important if your frontend needs to send cookies/auth headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allowed methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Explicitly allowed headers
+  credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
 }));
-// --- END CORS CONFIGURATION ---
 
 app.use(json({ limit: '5mb' }));
 
