@@ -18,7 +18,7 @@ const app = express();
 
 const allowedOrigins = [
   'https://job-pilot-phi.vercel.app',
-  /^https:\/\/job-pilot-.+\.vercel\.app$/
+  'https://job-pilot-nzgp6wque-sadiaimran837gmailcoms-projects.vercel.app' 
 ];
 
 app.use(cors({
