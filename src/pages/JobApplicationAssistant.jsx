@@ -317,7 +317,7 @@ const JobApplicationAssistant = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const rawApi = import.meta.env.VITE_BACKEND_URL || '';
-  const API = rawApi.replace(/\/+$/, '');
+  const API = rawApi.replace(/\/+$/, '') || '/api';
 
   useEffect(() => {
     const fetchResumes = async () => {
