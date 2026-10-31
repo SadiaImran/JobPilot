@@ -32,9 +32,10 @@ JobPilot is a full-stack AI-powered SaaS application that helps job seekers orga
 - React Router DOM
 
 ### ⚙️ Backend
-- Express.js (Node.js)
-- Axios for HTTP calls
-- dotenv for environment variables
+- FastAPI (Python)
+- Uvicorn (ASGI server)
+- Requests for Gemini API integration
+- python-dotenv for environment variables
 
 ### 🧠 AI Integration
 - Google Gemini API (Resume-Job Analysis + Cover Letter)
@@ -67,7 +68,7 @@ JobPilot is a full-stack AI-powered SaaS application that helps job seekers orga
 ```
 jobpilot/
 ├── src/
-│   ├── backend/             # Express server for Gemini API integration
+├── backend/             # FastAPI server for Gemini API integration
 │   ├── pages/               # Vite React frontend pages
 │   ├── components/          # Reusable UI components
 │   └── supabase.js          # Supabase client setup

@@ -316,7 +316,8 @@ const JobApplicationAssistant = () => {
   const [existingResumes, setExistingResumes] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const API = import.meta.env.VITE_BACKEND_URL;
+  const rawApi = import.meta.env.VITE_BACKEND_URL || '';
+  const API = rawApi.replace(/\/+$/, '');
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -401,7 +402,7 @@ const JobApplicationAssistant = () => {
       setAnalysis(data);
       setCurrentStep(2);
     } catch (err) {
-      setAnalysis({ error: 'Failed to analyze. Try again.' });
+      setAnalysis({ error: err.message || 'Failed to analyze. Try again.' });
     }
     setIsAnalyzing(false);
   };
@@ -432,11 +433,11 @@ const JobApplicationAssistant = () => {
         setCoverLetter(data.coverLetter);
         setCurrentStep(3);
       } else {
-        setCoverLetter('Error generating cover letter. Please try again.');
+        setCoverLetter(data.error || 'Error generating cover letter. Please try again.');
         setCurrentStep(3);
       }
     } catch (err) {
-      setCoverLetter('Error generating cover letter. Please try again.');
+      setCoverLetter(err.message || 'Error generating cover letter. Please try again.');
       setCurrentStep(3);
     }
   };

@@ -1,53 +1,97 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
 import express from 'express';
 import cors from 'cors';
 import pkg from 'body-parser';
 const { json } = pkg;
 import axios from 'axios';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env locally (if present)
+dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+const getGeminiApiKey = () => {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.VITE_GEMINI_API_KEY ||
+    ''
+  ).trim();
+};
+
 const app = express();
 
 const allowedOrigins = [
   'https://job-pilot-phi.vercel.app',
-  'https://job-pilot-nzgp6wque-sadiaimran837gmailcoms-projects.vercel.app' 
+  'https://jobpilot.vercel.app',
+  'https://job-pilot-nzgp6wque-sadiaimran837gmailcoms-projects.vercel.app'
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow non-browser requests (e.g. server-to-server, curl, Postman)
+      if (!origin) return callback(null, true);
 
-    const isAllowed = allowedOrigins.some(allowed => {
-      if (typeof allowed === 'string') {
-        return allowed === origin;
+      // Allow any localhost port for local development
+      if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+        return callback(null, true);
       }
-      return allowed.test(origin);
-    });
 
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed for this origin: ' + origin));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+      // Allow any Vercel deployment (preview or production)
+      if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+        return callback(null, true);
+      }
 
+      // Allow explicit domains
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Default allow so CORS never blocks valid clients unexpectedly
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(json({ limit: '5mb' }));
 
+// Health and root status endpoints
+app.get('/', (req, res) => {
+  const hasKey = Boolean(getGeminiApiKey());
+  res.status(200).json({
+    status: 'ok',
+    service: 'JobPilot Backend API',
+    geminiConfigured: hasKey,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.post('/analyze', async (req, res) => {
-  const { jobDescription, resumeText } = req.body;
+  const { jobDescription, resumeText } = req.body || {};
+
+  if (!jobDescription || !resumeText) {
+    return res.status(400).json({ error: 'Both jobDescription and resumeText are required.' });
+  }
+
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    console.error('Gemini API key is not configured!');
+    return res.status(500).json({
+      error: 'GEMINI_API_KEY is not configured on the server. Please add GEMINI_API_KEY in Railway Environment Variables.'
+    });
+  }
 
   const prompt = `
 You are a job application assistant. Analyze the following resume against the job description.
@@ -73,7 +117,7 @@ ${resumeText}
     while (attempts < 10) {
       try {
         response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
           {
             contents: [
               {
@@ -113,12 +157,29 @@ ${resumeText}
     res.json(analysis);
   } catch (err) {
     console.error('Gemini API error:', err?.response?.data || err.message);
-    res.status(500).json({ error: err?.response?.data?.error || err.message });
+    const errorMsg =
+      err?.response?.data?.error?.message ||
+      (typeof err?.response?.data?.error === 'string' ? err.response.data.error : null) ||
+      err.message ||
+      'Unknown server error';
+    res.status(500).json({ error: errorMsg });
   }
 });
 
 app.post('/cover-letter', async (req, res) => {
-  const { jobDescription, resumeText, analysis } = req.body;
+  const { jobDescription, resumeText, analysis } = req.body || {};
+
+  if (!jobDescription || !resumeText) {
+    return res.status(400).json({ error: 'Both jobDescription and resumeText are required.' });
+  }
+
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    console.error('Gemini API key is not configured!');
+    return res.status(500).json({
+      error: 'GEMINI_API_KEY is not configured on the server. Please add GEMINI_API_KEY in Railway Environment Variables.'
+    });
+  }
 
   const prompt = `
 You are a professional job application assistant. Based on the following job description and resume, and the analysis provided, write a personalized cover letter for this job application. The cover letter should be concise, professional, and highlight the candidate's strengths relevant to the job. Do not include any commentary or explanation, just the cover letter text.
@@ -130,7 +191,7 @@ Resume:
 ${resumeText}
 
 Analysis:
-${JSON.stringify(analysis)}
+${JSON.stringify(analysis || {})}
 `;
 
   try {
@@ -139,7 +200,7 @@ ${JSON.stringify(analysis)}
     while (attempts < 3) {
       try {
         response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
           {
             contents: [
               {
@@ -168,9 +229,14 @@ ${JSON.stringify(analysis)}
     res.json({ coverLetter });
   } catch (err) {
     console.error('Gemini API error:', err?.response?.data || err.message);
-    res.status(500).json({ error: err?.response?.data?.error || err.message });
+    const errorMsg =
+      err?.response?.data?.error?.message ||
+      (typeof err?.response?.data?.error === 'string' ? err.response.data.error : null) ||
+      err.message ||
+      'Unknown server error';
+    res.status(500).json({ error: errorMsg });
   }
 });
 
-const PORT = 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
